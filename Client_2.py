@@ -4,9 +4,14 @@ import os
 
 class Client:
     def __init__(self, HOST, PORT):
-        self.socket = socket.socket()
-        self.socket.connect((HOST, PORT))
-        self.talk_to_server()
+        try:
+            self.socket = socket.socket()
+            self.socket.connect((HOST, PORT))
+            print("Connesso al server.")
+            self.talk_to_server()
+        except Exception as e:
+            print(f"Errore connettendosi al server: {e}")
+            os._exit(0)
 
     def talk_to_server(self):
         Thread(target=self.receive_message).start()
@@ -17,7 +22,8 @@ class Client:
             try:
                 client_message = input("")
                 self.socket.send(client_message.encode())
-            except:
+            except Exception as e:
+                print(f"Errore inviando messaggio: {e}")
                 self.socket.close()
                 os._exit(0)
 
@@ -30,7 +36,8 @@ class Client:
                     self.socket.close()
                     os._exit(0)
                 print("\033[1;32;40m" + server_message + "\033[0m")
-            except:
+            except Exception as e:
+                print(f"Errore ricevendo messaggio: {e}")
                 self.socket.close()
                 os._exit(0)
 
